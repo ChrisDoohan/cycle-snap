@@ -3,11 +3,10 @@
     "Name": "Cycle Snap",
     "Description": "Cycles window snapping between 1/2, 2/3, and 1/3 of screen width, like Rectangle on macOS.",
     "Icon": "preferences-system-windows",
-    "Authors": [{ "Email": "you@example.com", "Name": "Chris" }],
+    "Authors": [{ "Email": "chrisdooha@gmail.com", "Name": "Chris Doohan" }],
     "Id": "cycle-snap",
     "Version": "1.0",
-    "License": "GPLv3",
-    "Website": "https://example.invalid/cycle-snap"
+    "License": "GPLv3"
   },
   "X-Plasma-API": "javascript",
   "X-Plasma-MainScript": "code/main.js",
