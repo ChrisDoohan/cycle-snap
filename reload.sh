@@ -4,6 +4,9 @@
 #
 # Strategy: unload via DBus, then toggle the plugin off/on via kwriteconfig so
 # KWin re-loads it through the full package system (required for shortcuts to work).
+# KWin caches compiled scripts under ~/.cache/kwin/qmlcache; without clearing it
+# a reload silently keeps running the previously compiled version, so we wipe it
+# before re-enabling. (Clearing just forces a harmless recompile of cached QML.)
 
 set -e
 
@@ -16,6 +19,9 @@ qdbus-qt6 org.kde.KWin /Scripting org.kde.kwin.Scripting.unloadScript "$SCRIPT_I
 echo "Disabling plugin in kwinrc..."
 kwriteconfig6 --file kwinrc --group Plugins --key "$KEY" false
 qdbus-qt6 org.kde.KWin /KWin reconfigure
+
+echo "Clearing KWin script compile cache..."
+rm -rf "${HOME:?HOME not set}/.cache/kwin/qmlcache"
 
 sleep 0.5
 
