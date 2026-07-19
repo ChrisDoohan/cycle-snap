@@ -36,5 +36,11 @@ The current step is inferred from the window's actual geometry, so the cycle sta
 |---|---|
 | Cycle snap left | `Meta+Left` |
 | Cycle snap right | `Meta+Right` |
+| Maximize | `Ctrl+Alt+Meta+Shift+F` |
 
-Shortcuts can be changed in **System Settings → Shortcuts → KWin** after the script is loaded.
+Shortcuts can be changed in **System Settings → Shortcuts → KWin** after the script is loaded (search for "Cycle Snap").
+
+**Maximize** fills the window to the full work area instantly, using the same
+direct-geometry mechanism as the snaps rather than KWin's built-in maximize —
+so there's no stretch animation. The window is sized to fill the screen but is
+not flagged as formally "maximized" by KDE.

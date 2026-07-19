@@ -65,6 +65,12 @@ function applyStep(window, direction, stepIndex, area) {
 
   var newGeo = { x: newX, y: area.y, width: newWidth, height: area.height };
 
+  // A snapped window is not maximized. Clear KWin's maximize flag before
+  // repositioning; otherwise setting geometry directly leaves the window
+  // visually snapped but still flagged maximized, so a later Maximize press
+  // is a no-op until the flag is cleared some other way (e.g. a mouse move).
+  try { window.setMaximize(false, false); } catch (_) {}
+
   // Plasma 6 uses frameGeometry; Plasma 5 uses geometry.
   try { window.frameGeometry = newGeo; return; } catch (_) {}
   try { window.geometry       = newGeo; return; } catch (_) {}
@@ -86,6 +92,29 @@ function handleSnap(direction) {
   applyStep(window, direction, nextStep, area);
 }
 
+// Maximize the active window in a single press, instantly. We set the geometry
+// straight to the full work area — the same mechanism as the left/right snaps —
+// rather than calling setMaximize(). setMaximize() triggers KWin's maximize
+// *effect* (the stretch animation) on the state transition regardless of the
+// window already being at the maximized geometry, so we avoid it entirely.
+// Consequence: KDE does not flag the window as formally "maximized", which is
+// consistent with how the snap steps behave.
+function handleMaximize() {
+  var window = workspace.activeWindow || workspace.activeClient;
+  if (!window) return;
+  if (window.specialWindow || window.skipTaskbar) return;
+
+  var area = getScreenArea(window);
+  if (!area) return;
+
+  // Clear any lingering maximized flag so KWin doesn't fight the geometry set.
+  try { window.setMaximize(false, false); } catch (_) {}
+
+  var newGeo = { x: area.x, y: area.y, width: area.width, height: area.height };
+  try { window.frameGeometry = newGeo; return; } catch (_) {}
+  try { window.geometry = newGeo; return; } catch (_) {}
+}
+
 registerShortcut(
   "CycleSnapLeft",
   "Cycle Snap Left",
@@ -98,4 +127,11 @@ registerShortcut(
   "Cycle Snap Right",
   "Meta+Right",
   function() { handleSnap("right"); }
+);
+
+registerShortcut(
+  "CycleSnapMaximizeWindow",
+  "Cycle Snap Maximize",
+  "Ctrl+Alt+Meta+Shift+F",
+  handleMaximize
 );
